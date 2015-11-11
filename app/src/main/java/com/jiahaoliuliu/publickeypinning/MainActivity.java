@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HurlStack;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
@@ -16,6 +17,12 @@ import com.jiahaoliuliu.publickeypinning.model.Request;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -83,7 +90,28 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            Volley.newRequestQueue(this).add(jsonObjectRequest);
+            // SSL Pinning
+            SSLContext sslContext = null;
+            try {
+                // Set the public key pinning
+                TrustManager tm[] = {new PubKeyManager()};
+                sslContext = SSLContext.getInstance("TLS");
+                sslContext.init(null, tm, null);
+            } catch (NoSuchAlgorithmException e) {
+                Log.e(TAG, "Error getting the instance of SSL context", e);
+            } catch (KeyManagementException e) {
+                Log.e(TAG, "Error getting the instance of SSL context", e);
+            }
+
+            HurlStack hurlStack = null;
+            if (sslContext == null) {
+                hurlStack = new HurlStack();
+            } else {
+                Log.v(TAG, "The public key pinning is enabled");
+                hurlStack = new HurlStack(null, sslContext.getSocketFactory());
+            }
+
+            Volley.newRequestQueue(this, hurlStack).add(jsonObjectRequest);
 
         } catch (JSONException exception) {
             Log.e(TAG, "Error parsing json", exception);
