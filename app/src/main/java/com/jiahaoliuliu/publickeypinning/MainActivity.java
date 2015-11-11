@@ -70,7 +70,11 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(JSONObject response) {
                     Log.v(TAG, "Response received " + response);
-                    mRandomNumberTextView.setText(String.valueOf(10000));
+                    com.jiahaoliuliu.publickeypinning.model.Response responseReturned = mGson.fromJson(response.toString(),
+                            com.jiahaoliuliu.publickeypinning.model.Response.class);
+                    Log.v(TAG, responseReturned.toString());
+
+                    mRandomNumberTextView.setText(String.valueOf(responseReturned.getResult().getRandom().getData().get(0)));
                 }
             }, new Response.ErrorListener() {
                 @Override
