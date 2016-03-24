@@ -83,7 +83,7 @@ public final class PubKeyManager implements X509TrustManager {
         Log.v(TAG, "The public key encoded with base 64 is " + base64Encoded);
 
         // Pin it!
-        final boolean expected = PUB_KEY.equalsIgnoreCase(base64Encoded);
+        final boolean expected = PUB_KEY.equals(base64Encoded);
         if (!expected) {
             throw new CertificateException(
                     "checkServerTrusted: Expected public key: " + PUB_KEY

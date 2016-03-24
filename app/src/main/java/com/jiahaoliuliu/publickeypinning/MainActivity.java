@@ -1,10 +1,12 @@
 package com.jiahaoliuliu.publickeypinning;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -43,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mRandomNumberTextView;
 
     // Internal variables
+    private Context mContext;
     private Gson mGson;
 
     @Override
@@ -51,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Set internal variables
+        mContext = this;
         mGson = new Gson();
 
         // Link the views
@@ -87,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Log.e(TAG, "Error received " + error, error);
+                    Toast.makeText(mContext, "Error Requesting the random number " + error, Toast.LENGTH_LONG).show();
                 }
             });
 
